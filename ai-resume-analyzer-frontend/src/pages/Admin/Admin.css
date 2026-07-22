@@ -1,0 +1,20 @@
+.admin-panel {
+  padding: 22px;
+}
+
+.admin-hero {
+  margin-top: 18px;
+  padding: 22px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.08), rgba(59, 130, 246, 0.06));
+}
+
+.admin-hero h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.25rem;
+  margin: 8px 0 6px;
+}
+
+.admin-hero p {
+  color: var(--muted);
+}
