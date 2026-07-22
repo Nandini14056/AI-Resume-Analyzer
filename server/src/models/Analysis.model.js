@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const analysisSchema = new mongoose.Schema(
   {
@@ -14,7 +14,7 @@ const analysisSchema = new mongoose.Schema(
     },
     atsScore: {
       type: Number,
-      require: true,
+      required: true,
       min: 0,
       max: 100
     },
@@ -29,7 +29,7 @@ const analysisSchema = new mongoose.Schema(
         type: String
       }
     ],
-    weakness: [
+    weaknesses: [
       {
         type: String
       }
@@ -39,10 +39,10 @@ const analysisSchema = new mongoose.Schema(
         type: String
       }
     ],
-    missingSkills: [
+    projectFeedback: [
       {
-        type: String
-      }
+        type: String,
+      },
     ],
     missingSkills: [
       {
@@ -60,7 +60,7 @@ const analysisSchema = new mongoose.Schema(
         type: String,
       },
     ],
-    recommendation: [
+    recommendations: [
       {
         type: String
       }

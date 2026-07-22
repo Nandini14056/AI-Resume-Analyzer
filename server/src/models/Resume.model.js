@@ -2,24 +2,24 @@ import mongoose from "mongoose";
 
 const resumeSchema = new mongoose.Schema(
   {
-    user:{
+    user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true
     },
-    originalFilename:{
+    originalFilename: {
       type: String,
       required: true,
       trim: true
     },
-    storedFilename:{
+    storedFilename: {
       type: String,
       required: true
     },
-    fileType:{
+    fileType: {
       type: String,
       required: true,
-      enum:[
+      enum: [
         "application/pdf",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       ],
@@ -28,11 +28,11 @@ const resumeSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
-    extractedText:{
+    extractedText: {
       type: String,
-      default:"",
+      default: "",
     },
-    status:{
+    status: {
       type: String,
       enum: [
         "uploaded",
@@ -42,7 +42,12 @@ const resumeSchema = new mongoose.Schema(
         "failed"
       ],
       default: "uploaded",
-    }
+    },
+    analysis: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Analysis",
+      default: null,
+    },
   },
   {
     timestamps: true
