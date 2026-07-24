@@ -1,0 +1,73 @@
+import Analysis from "../models/Analysis.model";
+import Resume from "../models/Resume.model";
+
+import asyncHandler from "../utils/asyncHandler";
+import ApiResponse from "../utils/ApiResponse";
+import ApiError from "../utils/ApiError";
+
+import { analyzeResumeWithAI } from "../services/groq.service";
+
+const analyzeResume = asyncHandler(async(req,res) => {
+  const {resumeId} = req.params;
+
+  if(!resumeId){
+    throw new ApiError(400, "Resume ID is required");
+  }
+
+  const resume = await Resume.findOne({
+    _id: resumeId,
+    user: req.user._id
+  });
+
+  if(!resume){
+    throw new ApiError(404,"Resume not found");
+  }
+
+  if(!resume.extractedText){
+    throw new ApiError(400, "Resume text has not been extracted yet");
+  }
+
+   if (resume.status === "analyzing") {
+    throw new ApiError(400, "Resume is already being analyzed");
+  }
+
+  if(resume.status === "analyzed"){
+    throw new ApiError(400, "Resume has already been analyzed");
+  }
+
+  resume.status = "analyzing";
+  await resume.save();
+
+ try {
+   const analysisData = await analyzeResumeWithAI(
+     resume.extractedText
+   );
+ 
+   const analysis = await Analysis.create({
+     user: req.user._id,
+     resume: resume._id,
+     ...analysisData,
+     rawResponse: analysisData,
+   });
+ 
+   resume.analysis = analysis._id;
+   resume.status = "analyzed";
+ 
+   await resume.save();
+ } catch (error) {
+  resume.status = "failed";
+  await resume.save();
+
+  throw new ApiErro(500,"Failed to analyze resume");
+ }
+
+    return res.status(201).json(
+    new ApiResponse(
+      201,
+      {
+        analysis,
+      },
+      "Resume analyzed successfully"
+    )
+  );
+});
