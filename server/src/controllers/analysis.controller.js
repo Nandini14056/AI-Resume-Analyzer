@@ -7,10 +7,10 @@ import ApiError from "../utils/ApiError";
 
 import { analyzeResumeWithAI } from "../services/groq.service";
 
-const analyzeResume = asyncHandler(async(req,res) => {
-  const {resumeId} = req.params;
+const analyzeResume = asyncHandler(async (req, res) => {
+  const { resumeId } = req.params;
 
-  if(!resumeId){
+  if (!resumeId) {
     throw new ApiError(400, "Resume ID is required");
   }
 
@@ -19,49 +19,49 @@ const analyzeResume = asyncHandler(async(req,res) => {
     user: req.user._id
   });
 
-  if(!resume){
-    throw new ApiError(404,"Resume not found");
+  if (!resume) {
+    throw new ApiError(404, "Resume not found");
   }
 
-  if(!resume.extractedText){
+  if (!resume.extractedText) {
     throw new ApiError(400, "Resume text has not been extracted yet");
   }
 
-   if (resume.status === "analyzing") {
+  if (resume.status === "analyzing") {
     throw new ApiError(400, "Resume is already being analyzed");
   }
 
-  if(resume.status === "analyzed"){
+  if (resume.status === "analyzed") {
     throw new ApiError(400, "Resume has already been analyzed");
   }
 
   resume.status = "analyzing";
   await resume.save();
 
- try {
-   const analysisData = await analyzeResumeWithAI(
-     resume.extractedText
-   );
- 
-   const analysis = await Analysis.create({
-     user: req.user._id,
-     resume: resume._id,
-     ...analysisData,
-     rawResponse: analysisData,
-   });
- 
-   resume.analysis = analysis._id;
-   resume.status = "analyzed";
- 
-   await resume.save();
- } catch (error) {
-  resume.status = "failed";
-  await resume.save();
+  try {
+    const analysisData = await analyzeResumeWithAI(
+      resume.extractedText
+    );
 
-  throw new ApiErro(500,"Failed to analyze resume");
- }
+    const analysis = await Analysis.create({
+      user: req.user._id,
+      resume: resume._id,
+      ...analysisData,
+      rawResponse: analysisData,
+    });
 
-    return res.status(201).json(
+    resume.analysis = analysis._id;
+    resume.status = "analyzed";
+
+    await resume.save();
+  } catch (error) {
+    resume.status = "failed";
+    await resume.save();
+
+    throw new ApiErro(500, "Failed to analyze resume");
+  }
+
+  return res.status(201).json(
     new ApiResponse(
       201,
       {
@@ -71,3 +71,72 @@ const analyzeResume = asyncHandler(async(req,res) => {
     )
   );
 });
+
+const getAnalysisById = asyncHandler(async (req, res) => {
+  const { analysisId } = req.params;
+
+  if (!analysisId) {
+    throw new ApiError(400, "Analysis ID is required");
+  }
+
+  const analysis = await Analysis.findOne({
+    _id: analysisId,
+    user: req.user._id,
+  }).populate("resume");
+
+  if (!analysis) {
+    throw new ApiError(404, "Analysis not found");
+  }
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      analysis,
+      "Analysis fetched successfully"
+    )
+  )
+});
+
+const getMyAnalysis = asyncHandler(async (req, res) => {
+  const analysis = await Analysis.find({
+    user: req.user._id
+  }).populate("resume").sort({ createdAt: -1 });
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      analysis,
+      "Analysis fetched successfully"
+    )
+  );
+});
+
+const deleteAnalysis = asyncHandler(async (req, res) => {
+  const { analysisId } = req.params;
+
+  const analysis = await Analysis.findOne({
+    _id: analysisId,
+    user: req.user._id,
+  });
+
+  if (!analysis) {
+    throw new ApiError(404, "Analysis not found");
+  }
+
+  await analysis.deleteOne();
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {},
+      "Analysis deleted successfully"
+    )
+  );
+});
+
+export {
+  analyzeResume,
+  getAnalysisById,
+  getMyAnalysis,
+  deleteAnalysis
+};
