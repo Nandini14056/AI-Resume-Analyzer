@@ -1,6 +1,6 @@
 import fs from "fs";
-import * as pdfParse from "pdf-parse";
 import mammoth from "mammoth";
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.mjs";
 
 const cleanText = (text) => {
   return text
@@ -11,11 +11,24 @@ const cleanText = (text) => {
 };
 
 const extractPdfText = async (filePath) => {
-  const buffer = fs.readFileSync(filePath);
+  const data = new Uint8Array(fs.readFileSync(filePath));
 
-  const data = await pdfParse(buffer);
+  const pdf = await pdfjsLib.getDocument({ data }).promise;
 
-  return cleanText(data.text);
+  let text = "";
+
+  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+    const page = await pdf.getPage(pageNum);
+
+    const content = await page.getTextContent();
+
+    text +=
+      content.items
+        .map((item) => item.str)
+        .join(" ") + "\n";
+  }
+
+  return cleanText(text);
 };
 
 const extractDocxText = async (filePath) => {
@@ -29,10 +42,10 @@ const extractDocxText = async (filePath) => {
 const extractResumeText = async (filePath, mimeType) => {
   switch (mimeType) {
     case "application/pdf":
-      return await extractPdfText(filePath);
+      return extractPdfText(filePath);
 
     case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-      return await extractDocxText(filePath);
+      return extractDocxText(filePath);
 
     default:
       throw new Error("Unsupported file type");

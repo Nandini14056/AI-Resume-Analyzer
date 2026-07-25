@@ -4,8 +4,6 @@ import app from "./app.js";
 
 dotenv.config();
 
-console.log(process.env.GROQ_API_KEY);
-
 const PORT = process.env.PORT || 8000;
 
 connectDB()

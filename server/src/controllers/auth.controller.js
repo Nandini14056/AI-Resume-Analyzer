@@ -49,6 +49,8 @@ const LoginUser = asyncHandler(async (req, res) => {
 
   const checkPassword = await user.isPasswordCorrect(password);
 
+  const accessToken = user.generateAccessToken();
+
   if (!checkPassword) {
     throw new ApiError(401, "Invalid email or password");
   }
@@ -63,7 +65,8 @@ const LoginUser = asyncHandler(async (req, res) => {
     new ApiResponse(
       200,
       {
-        user: loggedInUser
+        user: loggedInUser,
+        accessToken
       },
       "User logged in sucessfully"
     )
