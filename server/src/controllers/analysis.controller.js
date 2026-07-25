@@ -1,11 +1,11 @@
-import Analysis from "../models/Analysis.model";
-import Resume from "../models/Resume.model";
+import Analysis from "../models/Analysis.model.js";
+import Resume from "../models/Resume.model.js";
 
-import asyncHandler from "../utils/asyncHandler";
-import ApiResponse from "../utils/ApiResponse";
-import ApiError from "../utils/ApiError";
+import asyncHandler from "../utils/asyncHandler.js";
+import ApiResponse from "../utils/ApiResponse.js";
+import ApiError from "../utils/ApiError.js";
 
-import { analyzeResumeWithAI } from "../services/groq.service";
+import { analyzeResumeWithAI } from "../services/groq.service.js";
 
 const analyzeResume = asyncHandler(async (req, res) => {
   const { resumeId } = req.params;

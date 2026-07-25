@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { uploadResume, getResumeById, getUserResume, deleteResume } from "../controllers/resume.controller";
-import verifyJWT from "../middleware/auth.middleware";
-import upload from "../middleware/upload.middleware";
+import { uploadResume, getResumeById, getUserResume, deleteResume } from "../controllers/resume.controller.js";
+import verifyJWT from "../middleware/auth.middleware.js";
+import upload from "../middleware/upload.middleware.js";
 
 const router = Router();
 

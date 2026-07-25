@@ -1,8 +1,8 @@
-import Resume from "../models/Resume.model";
-import asyncHandler from "../utils/asyncHandler";
-import ApiResponse from "../utils/ApiResponse";
-import ApiError from "../utils/ApiError";
-import { extractResumeText } from "../services/resumeParser.service";
+import Resume from "../models/Resume.model.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import ApiResponse from "../utils/ApiResponse.js";
+import ApiError from "../utils/ApiError.js";
+import { extractResumeText } from "../services/resumeParser.service.js";
 
 const uploadResume = asyncHandler(async (req, res) => {
   if (!req.file) {

@@ -13,4 +13,4 @@ const parseAIResponse = (content) => {
   }
 };
 
-module.exports = parseAIResponse;
+export default parseAIResponse;

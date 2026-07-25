@@ -1,13 +1,13 @@
 import { Router } from "express";
 
-import { analyseResume, getAnalysisById, getMyAnalysis, deleteAnalysis } from "../controllers/analysis.controller";
-import verifyJWT from "../middleware/auth.middleware";
+import { analyzeResume, getAnalysisById, getMyAnalysis, deleteAnalysis } from "../controllers/analysis.controller.js";
+import verifyJWT from "../middleware/auth.middleware.js";
 
 const router = Router();
 
 router.use(verifyJWT);
 
-router.post("/:resumeId", analyseResume);
+router.post("/:resumeId", analyzeResume);
 
 router.get("/", getMyAnalysis);
 

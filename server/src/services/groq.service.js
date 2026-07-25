@@ -1,8 +1,9 @@
+import "dotenv/config";
 import Groq from "groq-sdk";
-import { parseAIResponse } from "../utils/parseAIResponse";
+import  parseAIResponse  from "../utils/parseAIResponse.js";
 
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY
+  apiKey: process.env.GROQ_API_KEY,
 });
 
 const analyzeResumeWithAI = async (resumeText) => {

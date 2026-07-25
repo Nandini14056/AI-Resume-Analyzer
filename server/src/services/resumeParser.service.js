@@ -1,5 +1,5 @@
 import fs from "fs";
-import pdfParse from "pdf-parse";
+import * as pdfParse from "pdf-parse";
 import mammoth from "mammoth";
 
 const cleanText = (text) => {

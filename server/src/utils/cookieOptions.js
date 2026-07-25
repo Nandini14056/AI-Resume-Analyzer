@@ -5,4 +5,4 @@ const cookieOptions = {
   maxAge: Number(process.env.COOKIE_EXPIRY),
 };
 
-module.exports = cookieOptions;
+export default cookieOptions;
