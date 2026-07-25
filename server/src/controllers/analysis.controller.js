@@ -54,14 +54,8 @@ const analyzeResume = asyncHandler(async (req, res) => {
     resume.status = "analyzed";
 
     await resume.save();
-  } catch (error) {
-    resume.status = "failed";
-    await resume.save();
 
-    throw new ApiErro(500, "Failed to analyze resume");
-  }
-
-  return res.status(201).json(
+    return res.status(201).json(
     new ApiResponse(
       201,
       {
@@ -70,6 +64,14 @@ const analyzeResume = asyncHandler(async (req, res) => {
       "Resume analyzed successfully"
     )
   );
+  } catch (error) {
+    resume.status = "failed";
+    await resume.save();
+
+    throw new ApiErro(500, "Failed to analyze resume");
+  }
+
+  
 });
 
 const getAnalysisById = asyncHandler(async (req, res) => {
