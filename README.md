@@ -1,201 +1,315 @@
-# AI Resume Analyzer
+# 🤖 AI Resume Analyzer
 
-A full-stack PHP web application that uses the **Groq AI API** (LLaMA 3) to analyze resumes and provide ATS compatibility scores, skill gap analysis, and job recommendations.
+An AI-powered Resume Analyzer built using the **MERN Stack** that helps users evaluate their resumes with detailed ATS (Applicant Tracking System) analysis, skill recommendations, and AI-generated feedback.
 
----
-
-## Tech Stack
-
-| Layer      | Technology                              |
-|------------|-----------------------------------------|
-| Backend    | PHP 8.1+ (MVC architecture)             |
-| Database   | MySQL 8.0+                              |
-| Frontend   | Bootstrap 5.3, HTML5, CSS3, JavaScript  |
-| AI Engine  | Groq API (llama-3.3-70b-versatile)              |
-| File Types | PDF, DOCX                               |
+The application allows users to upload resumes, automatically extract text from PDF/DOCX files, analyze the resume using Groq AI, and generate a professional report with ATS scores and improvement suggestions.
 
 ---
 
-## Project Structure
+## ✨ Features
+
+- 🔐 JWT Authentication (Register/Login)
+- 📄 Upload PDF & DOCX resumes
+- 📝 Automatic resume text extraction
+- 🤖 AI-powered resume analysis using Groq LLM
+- 📊 ATS Score & Overall Resume Score
+- 💡 AI-generated Recommendations
+- 🛠 Technical Skills Detection
+- ❌ Missing Skills Identification
+- 📚 Education & Experience Feedback
+- 🎯 Recommended Job Roles
+- 📜 Resume Analysis History
+- 🚪 Secure Logout
+- 📱 Responsive Modern UI
+
+---
+
+# 🛠 Tech Stack
+
+## Frontend
+
+- React.js
+- Vite
+- React Router DOM
+- Axios
+- Framer Motion
+- Lucide React
+- HTML5
+- CSS3
+
+---
+
+## Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- JWT Authentication
+- Multer
+- pdf-parse
+- mammoth
+- Groq SDK
+
+---
+
+## AI Model
+
+- Llama 3.3 70B Versatile
+- Groq API
+
+---
+
+# 📂 Project Structure
 
 ```
-ai-resume-analyzer/
-├── index.php              # App bootstrap & router
-├── schema.sql             # Database schema
-├── .env.example           # Environment template
-├── .htaccess              # Apache config
+AI-Resume-Analyzer
 │
-├── config/
-│   └── database.php       # DB connection + env loader
+├── client/
+│   ├── src/
+│   │   ├── pages/
+│   │   ├── components/
+│   │   ├── services/
+│   │   ├── assets/
+│   │   └── App.jsx
+│   │
+│   └── package.json
 │
-├── controllers/
-│   ├── AuthController.php    # Login, register, logout
-│   ├── ResumeController.php  # Upload + text extraction
-│   ├── AnalysisController.php # Groq AI analysis + report
-│   └── AdminController.php   # Admin panel
+├── server/
+│   ├── src/
+│   │   ├── config/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   ├── prompts/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   ├── utils/
+│   │   ├── app.js
+│   │   └── index.js
+│   │
+│   ├── uploads/
+│   └── package.json
 │
-├── models/
-│   ├── User.php
-│   ├── Resume.php
-│   └── Analysis.php
-│
-├── views/
-│   ├── auth/
-│   │   ├── login.php
-│   │   └── register.php
-│   ├── dashboard/
-│   │   ├── index.php       # Dashboard + upload
-│   │   ├── analyzing.php   # AI loading screen
-│   │   ├── report.php      # Full analysis report
-│   │   └── history.php     # Past analyses
-│   ├── admin/
-│   │   └── index.php
-│   └── partials/
-│       ├── header.php
-│       └── footer.php
-│
-├── api/
-│   └── GroqAPI.php         # Standalone Groq wrapper
-│
-├── assets/
-│   ├── css/style.css
-│   └── js/app.js
-│
-└── uploads/                # Resume files (gitignored)
-    └── .htaccess
+└── README.md
 ```
 
 ---
 
-## Setup Instructions
+# ⚙️ Installation
 
-### 1. Requirements
-
-- PHP 8.1+ with extensions: `pdo_mysql`, `zip`, `curl`, `fileinfo`
-- MySQL 8.0+
-- Apache with `mod_rewrite` (or Nginx equivalent)
-- A free [Groq API key](https://console.groq.com)
-
-### 2. Database Setup
-
-```sql
--- In MySQL:
-source /path/to/ai-resume-analyzer/schema.sql;
-```
-
-Or run the SQL file contents directly in phpMyAdmin / MySQL Workbench.
-
-### 3. Environment Configuration
+## Clone Repository
 
 ```bash
-cp .env.example .env
+git clone https://github.com/yourusername/AI-Resume-Analyzer.git
+
+cd AI-Resume-Analyzer
 ```
 
-Edit `.env`:
+---
+
+## Backend Setup
+
+```bash
+cd server
+
+npm install
+```
+
+Create a `.env` file
+
 ```env
-DB_HOST=localhost
-DB_NAME=ai_resume_analyzer
-DB_USER=root
-DB_PASS=your_db_password
+PORT=8000
 
-GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxx
-GROQ_MODEL=llama-3.3-70b-versatile
+MONGODB_URI=your_mongodb_connection
 
-APP_URL=http://localhost/ai-resume-analyzer
+ACCESS_TOKEN_SECRET=your_secret
+
+ACCESS_TOKEN_EXPIRY=7d
+
+GROQ_API_KEY=your_groq_api_key
 ```
 
-### 4. Set Permissions
+Run Backend
 
 ```bash
-chmod 755 uploads/
-chmod 644 .env
-```
-
-### 5. Deploy
-
-Place the project folder in your web server root (e.g., `htdocs/` or `www/`), then open:
-
-```
-http://localhost/ai-resume-analyzer/
+npm run dev
 ```
 
 ---
 
-## Default Admin Credentials
-
-| Field    | Value                |
-|----------|----------------------|
-| Email    | admin@resumeai.com   |
-| Password | admin123             |
-
-> Change this immediately after setup.
-
----
-
-## Features
-
-| Feature                   | Details                                      |
-|---------------------------|----------------------------------------------|
-| User Auth                 | Register, login, logout; `password_hash()`   |
-| Resume Upload             | PDF + DOCX, 5MB limit, MIME validation       |
-| Text Extraction           | Pure PHP PDF parser + ZipArchive DOCX reader |
-| AI Analysis               | Groq LLaMA 3 via cURL, JSON structured output|
-| ATS Score                 | 0–100 score with animated ring               |
-| Job Readiness Score       | 0–100 with color-coded rating                |
-| Strengths / Weaknesses    | Itemized lists                               |
-| Skills Gap                | Detected vs. missing skills                  |
-| Recommendations           | Numbered action items                        |
-| Recommended Roles         | AI-matched job titles                        |
-| Resume History            | All past analyses with scores                |
-| Admin Panel               | User list, all resumes, delete capability    |
-| CSRF Protection           | On all POST forms                            |
-| Drag & Drop Upload        | With file preview                            |
-| Responsive UI             | Mobile-first Bootstrap 5                     |
-
----
-
-## PDF Text Extraction Note
-
-The built-in PHP PDF extractor works for **text-based PDFs** (not scanned images).
-For better extraction coverage, install `poppler-utils` on your server:
+## Frontend Setup
 
 ```bash
-# Ubuntu/Debian
-sudo apt install poppler-utils
+cd client
 
-# macOS
-brew install poppler
+npm install
+
+npm run dev
 ```
 
-The app automatically uses `pdftotext` if available.
+Frontend runs on
+
+```
+http://localhost:5173
+```
+
+Backend runs on
+
+```
+http://localhost:8000
+```
 
 ---
 
-## Groq API Models
+# 🚀 Application Workflow
 
-| Model                  | Context | Speed    |
-|------------------------|---------|----------|
-| `llama-3.3-70b-versatile`      | 8K      | Fast ⚡   |
-| `llama3-8b-8192`       | 8K      | Fastest ⚡⚡|
-| `mixtral-8x7b-32768`   | 32K     | Moderate |
-
-Change `GROQ_MODEL` in `.env` to switch models.
+```text
+User Registration/Login
+            │
+            ▼
+      Upload Resume
+            │
+            ▼
+ Resume Text Extraction
+      (PDF/DOCX)
+            │
+            ▼
+      Groq AI Analysis
+            │
+            ▼
+ ATS Score + Resume Score
+            │
+            ▼
+ Technical Skills
+ Missing Skills
+ Recommendations
+            │
+            ▼
+     Report Generation
+            │
+            ▼
+      Download PDF
+```
 
 ---
 
-## Security Features
+# 📊 AI Analysis Includes
 
-- CSRF tokens on all forms
-- Password hashing with `PASSWORD_BCRYPT` (cost 12)
-- MIME type validation (not just extension)
-- PHP execution blocked in `/uploads/`
-- Session regeneration on login
-- `.env` blocked via `.htaccess`
-- Input sanitized with `htmlspecialchars`
-- Prepared statements (PDO) throughout
+- ATS Score
+- Overall Resume Score
+- Strengths
+- Weaknesses
+- Technical Skills
+- Missing Skills
+- Project Feedback
+- Education Feedback
+- Experience Feedback
+- AI Recommendations
+- Recommended Job Roles
 
 ---
 
-## License
+# 🔒 Authentication
 
-MIT — Free to use and modify for personal or commercial projects.
+- User Registration
+- Secure Login
+- JWT Authentication
+- Protected Routes
+- Logout Functionality
+
+---
+
+# 📸 Screenshots
+
+### Dashboard
+
+_Add Screenshot_
+
+---
+
+### Upload Resume
+
+_Add Screenshot_
+
+---
+
+### Analysis Report
+
+_Add Screenshot_
+
+---
+
+### History
+
+_Add Screenshot_
+
+---
+
+# 📦 API Endpoints
+
+## Authentication
+
+```
+POST /api/v1/auth/register
+
+POST /api/v1/auth/login
+```
+
+---
+
+## Resume
+
+```
+POST /api/v1/resume/upload
+
+GET /api/v1/resume
+
+GET /api/v1/resume/:resumeId
+
+DELETE /api/v1/resume/:resumeId
+```
+
+---
+
+## Analysis
+
+```
+POST /api/v1/analysis/:resumeId
+
+GET /api/v1/analysis
+
+GET /api/v1/analysis/:analysisId
+
+DELETE /api/v1/analysis/delete/:analysisId
+```
+
+---
+
+# 🎯 Future Improvements
+
+- Resume Version Comparison
+- Dark Mode
+- Resume Templates
+- Keyword Heatmap
+- AI Chat Assistant
+- Cover Letter Generator
+- Interview Question Generator
+- Resume Sharing
+- Cloud Storage Integration
+
+---
+
+# 👨‍💻 Author
+
+**Nandini Raulji**
+
+GitHub: https://github.com/yourusername
+
+LinkedIn: https://linkedin.com/in/yourprofile
+
+---
+
+# 📄 License
+
+This project is developed for educational and portfolio purposes.
