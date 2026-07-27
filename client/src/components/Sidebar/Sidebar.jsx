@@ -1,17 +1,28 @@
-import { Link, useLocation } from "react-router-dom";
-import { Home, UploadCloud, BarChart3, History, ShieldCheck, Sparkles } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  Home,
+  UploadCloud,
+  History,
+  Sparkles,
+  LogOut,
+} from "lucide-react";
 import "./Sidebar.css";
 
 const links = [
   { to: "/dashboard", label: "Dashboard", icon: Home },
   { to: "/upload", label: "Upload Resume", icon: UploadCloud },
-  { to: "/report/1", label: "Reports", icon: BarChart3 },
   { to: "/history", label: "History", icon: History },
-  { to: "/admin", label: "Admin", icon: ShieldCheck },
 ];
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+
+    navigate("/");
+  };
 
   return (
     <aside className="sidebar">
@@ -21,15 +32,19 @@ export default function Sidebar() {
         </div>
         <div>
           <strong>ResumeAI</strong>
-          <p>Premium analytics</p>
         </div>
       </div>
 
       <nav className="sidebar__nav">
         {links.map(({ to, label, icon: Icon }) => {
-          const active = location.pathname === to || location.pathname.startsWith(to);
+          const active =
+            location.pathname === to || location.pathname.startsWith(to);
           return (
-            <Link key={to} to={to} className={`sidebar__item ${active ? "active" : ""}`}>
+            <Link
+              key={to}
+              to={to}
+              className={`sidebar__item ${active ? "active" : ""}`}
+            >
               <Icon size={18} />
               <span>{label}</span>
             </Link>
@@ -38,8 +53,13 @@ export default function Sidebar() {
       </nav>
 
       <div className="sidebar__footer">
-        <p>AI screening</p>
-        <strong>Always on</strong>
+        <button className="logout-btn" onClick={handleLogout}>
+          <LogOut size={20} />
+          <div className="logout-content">
+            <span>Log out</span>
+            <small>Sign out of your account</small>
+          </div>
+        </button>
       </div>
     </aside>
   );

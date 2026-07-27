@@ -1,6 +1,5 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { Bell, Search, Sparkles, ChevronDown, LogOut } from "lucide-react";
-import api from "../../services/api";
+import { useLocation } from "react-router-dom";
+import { Bell, Search, Sparkles, ChevronDown } from "lucide-react";
 import "./Navbar.css";
 
 const titles = {
@@ -13,17 +12,10 @@ const titles = {
 
 export default function Navbar() {
   const location = useLocation();
-  const navigate = useNavigate();
+ 
   const title = titles[location.pathname] || "Workspace";
 
-  const handleLogout = async () => {
-    try {
-      await api.post("index.php?page=logout_api");
-    } catch (error) {
-      // ignore error, still redirect
-    }
-    navigate("/");
-  };
+
 
   return (
     <header className="topbar panel">
@@ -50,11 +42,7 @@ export default function Navbar() {
           <div className="avatar">N</div>
           <div>
             <strong>Nandini</strong>
-            <p>Product Designer</p>
           </div>
-          <button className="topbar__logout" onClick={handleLogout} title="Log out">
-            <LogOut size={18} />
-          </button>
           <ChevronDown size={16} />
         </div>
       </div>
