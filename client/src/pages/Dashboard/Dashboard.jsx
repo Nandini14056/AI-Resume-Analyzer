@@ -26,7 +26,7 @@ export default function Dashboard() {
           api.get("/analysis"),
         ]);
        
-        const resume = resumeResponse.data.data || [];
+        const resumes = resumeResponse.data.data || [];
         const analyses = analysisResponse.data.data || [];
 
         const merged = resumes.map((resume) => {
