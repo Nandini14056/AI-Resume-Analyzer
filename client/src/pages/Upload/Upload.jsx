@@ -63,7 +63,7 @@ export default function Upload() {
       setStatus("Analysis completed successfully!");
 
       setTimeout(() => {
-        navigate(`report/${analysis._id}`);
+        navigate(`/report/${analysis._id}`);
       }, 800);
     } catch (error) {
       setStatus(
