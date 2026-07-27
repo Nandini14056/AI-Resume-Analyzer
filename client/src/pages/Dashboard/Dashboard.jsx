@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, BadgeCheck, BrainCircuit, FileText, Sparkles, TrendingUp } from "lucide-react";
+import { BadgeCheck, FileText, Sparkles, TrendingUp } from "lucide-react";
 import api from "../../services/api";
 import "./Dashboard.css";
 
@@ -19,13 +19,30 @@ export default function Dashboard() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await api.get("index.php?page=dashboard_api");
-        if (response.data.success) {
-          setResumes(response.data.data);
-        } else {
-          setError("Failed to load dashboard data.");
-        }
+        setLoading(true);
+
+        const [resumeResponse, analysisResponse] = await Promise.all([
+          api.get("/resume"),
+          api.get("/analysis"),
+        ]);
+       
+        const resume = resumeResponse.data.data || [];
+        const analyses = analysisResponse.data.data || [];
+
+        const merged = resumes.map((resume) => {
+          const analysis = analyses.find(
+            (item) => item.resume === resume._id || item.resume?._id === resume._id
+          );
+
+          return {
+            ...resume,
+            analysis,
+          };
+        });
+
+        setResumes(merged);
       } catch (err) {
+        console.log(err);
         setError("Unable to connect to backend.");
       } finally {
         setLoading(false);
@@ -36,8 +53,19 @@ export default function Dashboard() {
   }, []);
 
   const totalResumes = resumes.length;
-  const analyzedResumes = resumes.filter((resume) => resume.analysis_id).length;
-  const averageAts = analyzedResumes > 0 ? Math.round(resumes.filter((resume) => resume.analysis_id).reduce((sum, resume) => sum + (resume.ats_score || 0), 0) / analyzedResumes) : 0;
+  const analyzedResumes = resumes.filter((resume) => resume.analysis).length;
+  const averageAts =
+  analyzedResumes > 0
+    ? Math.round(
+        resumes
+          .filter((resume) => resume.analysis)
+          .reduce(
+            (sum, resume) =>
+              sum + (resume.analysis?.atsScore || 0),
+            0
+          ) / analyzedResumes
+      )
+    : 0;
   const recent = resumes.slice(0, 3);
 
   return (
@@ -87,10 +115,10 @@ export default function Dashboard() {
             ) : (
               recent.map((item) => (
                 <RecentResume
-                  key={item.id}
-                  name={item.original_filename}
-                  score={item.ats_score || 0}
-                  status={item.analysis_id ? "Analyzed" : "Pending"}
+                  key={item._id}
+                  name={item.originalFilename}
+                  score={item.analysis?.atsScore || 0}
+                  status={item.analysis ? "Analyzed" : "Pending"}
                 />
               ))
             )}

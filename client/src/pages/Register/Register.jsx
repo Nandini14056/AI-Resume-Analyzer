@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../services/api";
-import "./Login.css";
-import { Eye, EyeOff, Mail, Lock, Sparkles, ArrowRight } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, UserRound, Sparkles } from "lucide-react";
+import "./Register.css";
 
-export default function Login() {
+export default function Register() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -17,16 +19,24 @@ export default function Login() {
     setLoading(true);
     setErrors([]);
 
+    if (password !== confirmPassword) {
+      setErrors(["Passwords do not match"]);
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await api.post("index.php?page=login_api", { email, password });
-      if (response.data.success) {
+       await api.post("/auth/register", {
+        name,
+        email,
+        password
+      });
         navigate("/dashboard");
-      } else {
-        setErrors(response.data.errors || ["Login failed. Please try again."]);
-      }
+     
     } catch (error) {
-      const serverErrors = error.response?.data?.errors;
-      setErrors(serverErrors || [error.response?.data?.error || "Unable to login."]);
+      setErrors([
+        error.response?.data?.message ||"Registration failed",
+      ]);
     } finally {
       setLoading(false);
     }
@@ -37,15 +47,15 @@ export default function Login() {
       <div className="auth-visual">
         <div className="auth-visual__badge">
           <Sparkles size={16} />
-          AI resume intelligence
+          New account onboarding
         </div>
-        <h1>Make every application more compelling.</h1>
-        <p>Review ATS readiness, uncover missing keywords, and turn raw resumes into polished hiring insights.</p>
+        <h1>Launch smarter resume reviews from day one.</h1>
+        <p>Create a workspace that feels as polished as the analyses you deliver.</p>
         <div className="auth-visual__card">
           <div className="auth-visual__dot" />
           <div>
-            <strong>92% match quality</strong>
-            <p>Real-time scoring and recommendations ready in seconds.</p>
+            <strong>Instant setup</strong>
+            <p>Begin with premium dashboards, activity tracking, and actionable scoring.</p>
           </div>
         </div>
       </div>
@@ -54,8 +64,8 @@ export default function Login() {
         <div className="logo">
           <Sparkles size={20} />
         </div>
-        <h2>Welcome back</h2>
-        <p>Sign in to continue your hiring workflow.</p>
+        <h2>Create your account</h2>
+        <p>Start optimizing every resume review with a modern workflow.</p>
 
         <form onSubmit={handleSubmit}>
           {errors.length > 0 && (
@@ -67,6 +77,19 @@ export default function Login() {
           )}
 
           <div className="input-group">
+            <label>Full name</label>
+            <div className="input-box">
+              <UserRound className="icon" size={16} />
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Alex Morgan"
+              />
+            </div>
+          </div>
+
+          <div className="input-group">
             <label>Email</label>
             <div className="input-box">
               <Mail className="icon" size={16} />
@@ -74,7 +97,7 @@ export default function Login() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@company.com"
+                placeholder="alex@company.com"
               />
             </div>
           </div>
@@ -87,7 +110,7 @@ export default function Login() {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
+                placeholder="Create a password"
               />
               <button type="button" className="eye-btn" onClick={() => setShowPassword((value) => !value)}>
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -95,14 +118,27 @@ export default function Login() {
             </div>
           </div>
 
+          <div className="input-group">
+            <label>Confirm password</label>
+            <div className="input-box">
+              <Lock className="icon" size={16} />
+              <input
+                type={showPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm password"
+              />
+            </div>
+          </div>
+
           <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? "Signing in..." : "Sign in"}
+            {loading ? "Creating account..." : "Create account"}
           </button>
         </form>
 
         <div className="bottom-text">
-          Don’t have an account?
-          <Link to="/register">Create one</Link>
+          Already have an account?
+          <Link to="/">Log in</Link>
         </div>
       </div>
     </div>

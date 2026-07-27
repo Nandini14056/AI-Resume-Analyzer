@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../services/api";
-import { Eye, EyeOff, Mail, Lock, UserRound, Sparkles, ArrowRight } from "lucide-react";
-import "./Register.css";
+import "./Login.css";
+import { Eye, EyeOff, Mail, Lock, Sparkles } from "lucide-react";
 
-export default function Register() {
-  const [name, setName] = useState("");
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -20,20 +18,17 @@ export default function Register() {
     setErrors([]);
 
     try {
-      const response = await api.post("index.php?page=register_api", {
-        name,
-        email,
-        password,
-        confirm_password: confirmPassword,
-      });
-      if (response.data.success) {
+      const response = await api.post("/auth/login", { email, password });
+
+      localStorage.setItem(
+        "accessToken",
+        response.data.data.accessToken
+      );
+
         navigate("/dashboard");
-      } else {
-        setErrors(response.data.errors || ["Registration failed. Please try again."]);
-      }
+    
     } catch (error) {
-      const serverErrors = error.response?.data?.errors;
-      setErrors(serverErrors || [error.response?.data?.error || "Unable to register."]);
+      setErrors(error.response?.data?.errors || ["Login failed. Please try again."]);
     } finally {
       setLoading(false);
     }
@@ -44,15 +39,15 @@ export default function Register() {
       <div className="auth-visual">
         <div className="auth-visual__badge">
           <Sparkles size={16} />
-          New account onboarding
+          AI resume intelligence
         </div>
-        <h1>Launch smarter resume reviews from day one.</h1>
-        <p>Create a workspace that feels as polished as the analyses you deliver.</p>
+        <h1>Make every application more compelling.</h1>
+        <p>Review ATS readiness, uncover missing keywords, and turn raw resumes into polished hiring insights.</p>
         <div className="auth-visual__card">
           <div className="auth-visual__dot" />
           <div>
-            <strong>Instant setup</strong>
-            <p>Begin with premium dashboards, activity tracking, and actionable scoring.</p>
+            <strong>92% match quality</strong>
+            <p>Real-time scoring and recommendations ready in seconds.</p>
           </div>
         </div>
       </div>
@@ -61,8 +56,8 @@ export default function Register() {
         <div className="logo">
           <Sparkles size={20} />
         </div>
-        <h2>Create your account</h2>
-        <p>Start optimizing every resume review with a modern workflow.</p>
+        <h2>Welcome back</h2>
+        <p>Sign in to continue your hiring workflow.</p>
 
         <form onSubmit={handleSubmit}>
           {errors.length > 0 && (
@@ -74,19 +69,6 @@ export default function Register() {
           )}
 
           <div className="input-group">
-            <label>Full name</label>
-            <div className="input-box">
-              <UserRound className="icon" size={16} />
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Alex Morgan"
-              />
-            </div>
-          </div>
-
-          <div className="input-group">
             <label>Email</label>
             <div className="input-box">
               <Mail className="icon" size={16} />
@@ -94,7 +76,7 @@ export default function Register() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="alex@company.com"
+                placeholder="name@company.com"
               />
             </div>
           </div>
@@ -107,7 +89,7 @@ export default function Register() {
                 type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Create a password"
+                placeholder="Enter password"
               />
               <button type="button" className="eye-btn" onClick={() => setShowPassword((value) => !value)}>
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -115,27 +97,14 @@ export default function Register() {
             </div>
           </div>
 
-          <div className="input-group">
-            <label>Confirm password</label>
-            <div className="input-box">
-              <Lock className="icon" size={16} />
-              <input
-                type={showPassword ? "text" : "password"}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm password"
-              />
-            </div>
-          </div>
-
           <button type="submit" className="login-btn" disabled={loading}>
-            {loading ? "Creating account..." : "Create account"}
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
         <div className="bottom-text">
-          Already have an account?
-          <Link to="/">Log in</Link>
+          Don’t have an account?
+          <Link to="/register">Create one</Link>
         </div>
       </div>
     </div>
