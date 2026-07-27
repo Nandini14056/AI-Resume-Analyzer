@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, Filter, ArrowRight } from "lucide-react";
+import { Search, Filter, ArrowRight, Trash2 } from "lucide-react";
 import api from "../../services/api";
 import Navbar from "../../components/Navbar/Navbar";
 import Sidebar from "../../components/Sidebar/Sidebar";
@@ -16,14 +16,29 @@ export default function History() {
   useEffect(() => {
     async function fetchHistory() {
       try {
-        const response = await api.get("index.php?page=history_api");
-        if (response.data.success) {
-          setResumes(response.data.data);
-        } else {
-          setError("Failed to load history.");
-        }
+        const [resumeResponse, analysisResponse] = await Promise.all([
+          api.get("/resume"),
+          api.get("/analysis"),
+        ]);
+
+        const resumes = resumeResponse.data.data || [];
+        const analyses = analysisResponse.data.data || [];
+
+        const history = resumes.map((resume) => {
+          const analysis = analyses.find(
+            (item) =>
+              item.resume === resume._id || item.resume?._id === resume._id,
+          );
+
+          return {
+            ...resume,
+            analysis,
+          };
+        });
+        setResumes(history);
       } catch (err) {
-        setError("Unable to connect to backend.");
+        console.log(err);
+        setError("Unable to load history.");
       } finally {
         setLoading(false);
       }
@@ -39,11 +54,18 @@ export default function History() {
       <main className="page-content">
         <Navbar />
 
-        <motion.section className="panel history-panel" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
+        <motion.section
+          className="panel history-panel"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+        >
           <div className="section-heading">
             <div>
               <h2 className="section-title">Analysis history</h2>
-              <p className="section-subtitle">A polished record of every review workflow.</p>
+              <p className="section-subtitle">
+                A polished record of every review workflow.
+              </p>
             </div>
             <button className="btn btn-primary">Export history</button>
           </div>
@@ -73,16 +95,52 @@ export default function History() {
             ) : error ? (
               <div className="empty-state">{error}</div>
             ) : resumes.length === 0 ? (
-              <div className="empty-state">No resume history available yet.</div>
+              <div className="empty-state">
+                No resume history available yet.
+              </div>
             ) : (
               resumes.map((item) => (
-                <div className="history-table__row" key={item.id}>
-                  <strong>{item.original_filename}</strong>
-                  <span>{new Date(item.created_at).toLocaleDateString()}</span>
-                  <span className={`history-badge ${item.status.toLowerCase()}`}>{item.status}</span>
-                  <strong>{item.ats_score || 0}%</strong>
-                  <button className="history-action" onClick={() => item.analysis_id && navigate(`/report/${item.analysis_id}`)}>
+                <div className="history-table__row" key={item._id}>
+                  <strong>{item.originalFilename}</strong>
+                  <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+                  <span
+                    className={`history-badge ${item.status.toLowerCase()}`}
+                  >
+                    {item.analysis ? "Analyzed" : "Pending"}
+                  </span>
+                  <strong>{item.atsScore || 0}%</strong>
+                  <button
+                    className="history-action"
+                    onClick={() =>
+                      item.analysis && navigate(`/report/${item.analysis_id}`)
+                    }
+                  >
                     <ArrowRight size={16} />
+                  </button>
+                  <button
+                    className="history-delete"
+                    onClick={async () => {
+                      if (!window.confirm("Delete this resume?")) return;
+
+                      try {
+                        if (item.analysis) {
+                          await api.delete(
+                            `/analysis/delete/${item.analysis._id}`,
+                          );
+                        }
+
+                        await api.delete(`/resume/${item._id}`);
+
+                        setResumes((prev) =>
+                          prev.filter((resume) => resume._id !== item._id),
+                        );
+                      } catch (error) {
+                        console.error(error);
+                      }
+                    }}
+                  >
+                    <Trash2 size={16} />
+                    Delete
                   </button>
                 </div>
               ))

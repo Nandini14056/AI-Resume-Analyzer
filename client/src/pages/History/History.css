@@ -97,6 +97,42 @@
   color: var(--primary);
 }
 
+.history-delete {
+  width: 130px;      /* Same width for every button */
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #ef4444;
+  color: #fff;
+
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+
+.history-delete:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(239, 68, 68, 0.25);
+}
+
+.history-delete:active {
+  transform: scale(0.97);
+}
+
+.history-delete svg {
+  flex-shrink: 0;
+}
+
 @media (max-width: 760px) {
   .history-toolbar {
     flex-direction: column;
