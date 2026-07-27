@@ -26,8 +26,7 @@ export default function History() {
 
         const history = resumes.map((resume) => {
           const analysis = analyses.find(
-            (item) =>
-              item.resume === resume._id || item.resume?._id === resume._id,
+            (item) => String(item.resume._id) === String(resume._id),
           );
 
           return {
@@ -35,6 +34,7 @@ export default function History() {
             analysis,
           };
         });
+        console.log(history);
         setResumes(history);
       } catch (err) {
         console.log(err);
@@ -108,12 +108,14 @@ export default function History() {
                   >
                     {item.analysis ? "Analyzed" : "Pending"}
                   </span>
-                  <strong>{item.atsScore || 0}%</strong>
+                  <strong>{item.analysis?.overallScore || 0}%</strong>
                   <button
                     className="history-action"
-                    onClick={() =>
-                      item.analysis && navigate(`/report/${item.analysis_id}`)
-                    }
+                    onClick={() => {
+                      if (!item.analysis) return;
+
+                      navigate(`/report/${item.analysis._id}`);
+                    }}
                   >
                     <ArrowRight size={16} />
                   </button>

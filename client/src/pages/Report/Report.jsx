@@ -87,7 +87,7 @@ export default function Report() {
                         : "Resume needs improvement"}
                     </h3>
                     <p>
-                      {report.raw_response
+                      {report?.rawResponse
                         ? "AI analysis is available below."
                         : "No analysis details available."}
                     </p>
