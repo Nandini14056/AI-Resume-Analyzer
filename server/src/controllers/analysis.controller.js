@@ -68,7 +68,7 @@ const analyzeResume = asyncHandler(async (req, res) => {
     resume.status = "failed";
     await resume.save();
 
-    throw new ApiErro(500, "Failed to analyze resume");
+    throw new ApiError(500, "Failed to analyze resume");
   }
 
   

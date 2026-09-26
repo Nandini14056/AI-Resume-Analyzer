@@ -24,8 +24,9 @@ export default function Login() {
         "accessToken",
         response.data.data.accessToken
       );
+      localStorage.setItem("user", JSON.stringify(response.data.data.user));
 
-        navigate("/dashboard");
+      navigate("/dashboard");
     
     } catch (error) {
       setErrors(error.response?.data?.errors || ["Login failed. Please try again."]);

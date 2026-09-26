@@ -67,7 +67,7 @@ export default function Upload() {
       }, 800);
     } catch (error) {
       setStatus(
-        error.response?.data?.error || "Upload failed. Please try again.",
+        error.response?.data?.message || "Upload failed. Please try again.",
       );
     } finally {
       setLoading(false);

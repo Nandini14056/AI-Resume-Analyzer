@@ -31,7 +31,7 @@ export default function Register() {
         email,
         password
       });
-        navigate("/dashboard");
+        navigate("/");
      
     } catch (error) {
       setErrors([

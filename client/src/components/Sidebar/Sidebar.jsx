@@ -20,6 +20,7 @@ export default function Sidebar() {
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
 
     navigate("/");
   };
