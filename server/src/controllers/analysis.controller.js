@@ -65,11 +65,17 @@ const analyzeResume = asyncHandler(async (req, res) => {
     )
   );
   } catch (error) {
-    resume.status = "failed";
-    await resume.save();
+    console.error("========== RESUME ANALYSIS ERROR ==========");
+    console.error(error);
+    console.error("Message:", error.message);
+    console.error("Stack:", error.stack);
+    console.error("============================================");
 
-    throw new ApiError(500, "Failed to analyze resume");
-  }
+    return res.status(500).json({
+        success: false,
+        message: error.message || "Failed to analyze resume"
+    });
+}
 
   
 });
