@@ -37,7 +37,7 @@ const analyzeResumeWithAI = async (resumeText) => {
   `;
   
   const completion = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
+    model: process.env.GROQ_MODEL,
     temperature: 0.2,
     messages: [
       {
