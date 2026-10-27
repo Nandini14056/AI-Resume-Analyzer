@@ -7,7 +7,7 @@ The application allows users to securely register, upload their resumes in PDF/D
 ## 🚀 Live Demo
 
 **Frontend:**  
-https://ai-resume-analyzer-inky-pi.vercel.app/
+https://ai-resume-analyzer-9rujyi6av-ai-intreview.vercel.app/
 
 **Backend:**  
 https://ai-resume-analyzer-5qlz.onrender.com/
