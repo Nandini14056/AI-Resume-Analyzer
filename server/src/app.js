@@ -15,6 +15,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.get("/", (req, res) => {
+  res.send("AI Resume Analyzer API is running!");
+});
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/resume", resumeRouter);
 app.use("/api/v1/analysis", analysisRouter);
